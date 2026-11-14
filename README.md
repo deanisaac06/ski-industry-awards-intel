@@ -4,9 +4,11 @@ A searchable, static website (no build step, no server) that catalogs ski-indust
 
 ## How to view it
 
-Download or clone this repo and open `index.html` in any browser. Everything runs locally from `data.js` ... `data10.js` and `app.js`. To publish it as a website, enable GitHub Pages (Settings > Pages) or drop the folder on any static host. Note that Pages on a private repo requires a paid GitHub plan.
+Download or clone this repo and open `index.html` in any browser. Everything runs locally from `data.js` ... `data11.js` and `app.js`. To publish it as a website, enable GitHub Pages (Settings > Pages) or drop the folder on any static host. Note that Pages on a private repo requires a paid GitHub plan.
 
-## What is inside (v0.3, Nov 2026)
+Live site: https://deanisaac06.github.io/ski-industry-awards-intel/
+
+## What is inside (v0.4, Nov 2026)
 
 **NSAA (formal industry awards)**
 - Marketing Awards: every winner 2010-2026 (2009-10 through 2025-26 seasons), plus 2009 and 2007 winners from news coverage; finalists 2019 and 2021-2026.
@@ -31,7 +33,14 @@ Download or clone this repo and open `index.html` in any browser. Everything run
 
 ## Site sections
 
-Award campaigns tab, Leaderboard (industry recognition score, consumer reputation leaders, repeat winners, who excels at what, small resorts outperforming their size), Awards database (filter by program, year, capability area, status, text; CSV export), Resort profiles (full timeline + campaigns), Campaign library, Lessons by theme, Creative partners (agencies, production companies, athletes, people, individual honorees), Sources, About/methodology.
+The site is marketing-first. A filter bar at the top (year range with Last 3 / 5 / 10 year presets, and resort size: over / under 500k skier visits) applies to every tab and is remembered in your browser.
+
+- **Leaderboard:** marketing score (NSAA Marketing win x3, finalist x1, Conversion Cup win x2, SAM Best x1, Peer Review x2, SAM Worst -0.5), who excels at each marketing area, and the most-critiqued resorts.
+- **Award campaigns:** campaign names, results, agencies and people behind NSAA winners.
+- **Campaign library:** SAM Best/Worst and Peer Review entries, filterable by type, channel and marketing area.
+- **Lessons by theme**, **Resort profiles**, **Database** (grouped Marketing / Other awards / Consumer rankings, CSV export), **Creative partners**.
+- **Other awards:** NSAA Safety, Golden Eagle and Guest Service, kept out of the marketing score.
+- **Reputation:** World Ski Awards, USA TODAY 10Best, SKI Magazine and Conde Nast rankings, next to each resort's marketing score.
 
 ## Data model
 
@@ -50,6 +59,7 @@ Award campaigns tab, Leaderboard (industry recognition score, consumer reputatio
 | data7.js | NSAA Safety winners 2011-2025; Marketing, Safety, Golden Eagle and Conversion Cup finalists 2021-2025 |
 | data8.js | SAM Best/Worst Advertising 2010 (2009-10 season) |
 | data9.js | World Ski Awards, USA TODAY 10Best, SKI Magazine rankings; source catalog updates |
+| data11.js | Resort size classes (L / S / O) used by the size filter; extends what is inferred from NSAA visit divisions |
 | data10.js | NSAA 2007-2009 marketing, Guest Service 2009-10, Safety 2009, 2019 finalists; 10Best ski school / tubing / terrain park; Conde Nast; award campaign details (`C(...)`) |
 
 ## Known gaps / next steps
