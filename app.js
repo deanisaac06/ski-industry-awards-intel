@@ -25,9 +25,10 @@ var AREAS = [
 ["Traditional & direct", /old school|traditional|direct|print|tradeshow|potty/i],
 ["Events & earned media", /event|bash|showcase|earned media|power move|friday night|star power|kickoff|stored snow|rivalry|unique|newsjacking|viral/i],
 ["Sustainability", /environment|sustainab|climate|eagle/i],
-["Safety", /safety|collision|responsibility code|rideanotherday|helmet|avalanche|chairlift/i]
+["Safety", /safety|collision|responsibility code|rideanotherday|helmet|avalanche|chairlift/i],
+["Guest service", /guest service/i]
 ];
-var CONS = {WSA: 1, TB: 1, SKI: 1}; // consumer reputation programs: shown separately, not in the marketing score
+var CONS = {WSA: 1, TB: 1, SKI: 1, CNT: 1}; // consumer reputation programs: shown separately, not in the marketing score
 function areasOf(a) {
 if (CONS[a.p]) return ["Consumer reputation"];
 var txt = a.c + " " + (a.sam != null ? SAM[a.sam].tg : "");
@@ -40,7 +41,10 @@ if (a.p === "CC" && r.indexOf("Beginner & conversion") < 0) r.push("Beginner & c
 return r;
 }
 AW.forEach(function (a) { a.areas = areasOf(a); a.small = /under 500k|up to 100k|100k-250k|250k-500k|under 350k|under 250k/i.test(a.c); });
-var FORMAL = {M: 1, GE: 1, CC: 1, S: 1};
+var FORMAL = {M: 1, GE: 1, CC: 1, S: 1, GS: 1};
+// attach documented campaign details (data10.js) to their award rows
+var CAMPS = (typeof CAMP !== "undefined") ? CAMP : [];
+CAMPS.forEach(function (k) { AW.forEach(function (a) { if (a.p === k.p && a.y === k.y && a.r === k.r && a.c === k.c) { a.camp = k; } }); });
 var YEARS = uniq(AW.map(function (a) { return a.y; })).sort(function (a, b) { return b - a; });
 var RESORTS = uniq(AW.map(function (a) { return a.r; })).sort();
 // ---- per-resort stats ----
@@ -109,7 +113,7 @@ h += '<div class="card"><h3>' + esc(name) + '</h3><ol>' + rows.map(function (s) 
 h += '</div>';
 // consumer reputation
 var rep = Object.keys(ST).map(function (k) { return ST[k]; }).filter(function (s) { return s.rep > 0; }).sort(function (a, b) { return b.rep - a.rep || b.rep1 - a.rep1; });
-h += '<h2>Consumer reputation leaders</h2><p class="muted">World Ski Awards country wins, USA TODAY 10Best Readers\' Choice and SKI Magazine reader survey. Reputation index = #1 / country win x3 + any other listing x1 (nominations excluded). Useful for comparing marketing recognition with how guests actually rate the product.</p><table><thead><tr><th>#</th><th>Resort</th><th>Loc</th><th>Index</th><th>#1s / wins</th><th>Other listings</th><th>Programs</th><th>Marketing score</th></tr></thead><tbody>';
+h += '<h2>Consumer reputation leaders</h2><p class="muted">World Ski Awards country wins, USA TODAY 10Best Readers\' Choice, SKI Magazine reader survey and Conde Nast Traveler Readers\' Choice. Reputation index = #1 / country win x3 + any other listing x1 (nominations excluded). Useful for comparing marketing recognition with how guests actually rate the product.</p><table><thead><tr><th>#</th><th>Resort</th><th>Loc</th><th>Index</th><th>#1s / wins</th><th>Other listings</th><th>Programs</th><th>Marketing score</th></tr></thead><tbody>';
 rep.slice(0, 30).forEach(function (s, i) { h += '<tr><td>' + (i + 1) + '</td><td>' + rlink(s.r) + '</td><td>' + esc(s.l) + '</td><td><b>' + s.rep + '</b></td><td>' + s.rep1 + '</td><td>' + s.repR + '</td><td class="small">' + Object.keys(s.repP).map(progName).join(", ") + '</td><td>' + s.score + '</td></tr>'; });
 h += '</tbody></table>';
 // small resorts punching above their weight
@@ -148,7 +152,7 @@ var rows = filteredAwards();
 var h = '<p class="muted">' + rows.length + ' records</p><table><thead><tr><th>Year</th><th>Program</th><th>Category / title</th><th>Recipient</th><th>Loc</th><th>Status</th><th>Areas</th><th>Notes</th></tr></thead><tbody>';
 rows.forEach(function (a) {
 var src = a.sam != null ? SAM[a.sam].u : PROGRAMS[a.p].url;
-h += '<tr><td>' + a.y + '</td><td><a href="' + esc(src) + '" target="_blank" rel="noopener">' + esc(progName(a.p)) + '</a></td><td>' + esc(a.c) + '</td><td>' + rlink(a.r) + '</td><td>' + esc(a.l) + '</td><td>' + statusBadge(a) + '</td><td>' + a.areas.map(function (x) { return '<span class="tag">' + esc(x) + '</span>'; }).join(" ") + '</td><td class="small">' + esc(a.n) + '</td></tr>';
+h += '<tr><td>' + a.y + '</td><td><a href="' + esc(src) + '" target="_blank" rel="noopener">' + esc(progName(a.p)) + '</a></td><td>' + esc(a.c) + '</td><td>' + rlink(a.r) + '</td><td>' + esc(a.l) + '</td><td>' + statusBadge(a) + '</td><td>' + a.areas.map(function (x) { return '<span class="tag">' + esc(x) + '</span>'; }).join(" ") + '</td><td class="small">' + (a.camp ? '<b>' + esc(a.camp.name) + '</b>' + (a.n ? ' &middot; ' : '') : '') + esc(a.n) + '</td></tr>';
 });
 $("aOut").innerHTML = h + '</tbody></table>';
 }
@@ -177,6 +181,8 @@ h += '<h3>Timeline</h3><table><thead><tr><th>Year</th><th>Program</th><th>Catego
 rows.forEach(function (a) { h += '<tr><td>' + a.y + '</td><td>' + esc(progName(a.p)) + '</td><td>' + esc(a.c) + '</td><td>' + statusBadge(a) + '</td><td class="small">' + esc(a.n) + '</td></tr>'; });
 h += '</tbody></table>';
 var cs = SAM.filter(function (e) { return e.r.split(/;\s*/).indexOf(r) >= 0; });
+var ac = CAMPS.filter(function (k) { return k.r === r; });
+if (ac.length) { h += '<h3>Award-winning campaigns</h3><div class="grid">' + ac.map(ccard).join("") + '</div>'; }
 if (cs.length) { h += '<h3>Campaigns & lessons (SAM)</h3><div class="grid">' + cs.map(card).join("") + '</div>'; }
 $("rOut").innerHTML = h + '</div>';
 }
@@ -185,6 +191,12 @@ function card(e) {
 var kind = {B: '<span class="b win">SAM Best</span>', W: '<span class="b worst">SAM Worst</span>', M: '<span class="b mixed">Mixed</span>', P: '<span class="b peer">Peer Review</span>'}[e.k];
 return '<div class="card c' + e.k + '"><div class="meta">' + kind + ' <span class="muted">' + e.y + ' | ' + esc(e.ch) + '</span></div><h3>' + esc(e.t) + '</h3><p class="who">' + e.r.split(/;\s*/).map(rlink).join(", ") + ' <span class="muted">' + esc(e.l) + '</span></p><p>' + esc(e.s) + '</p><p class="lesson"><b>Lesson:</b> ' + esc(e.les) + '</p>' + (e.pt ? '<p class="small"><b>Partners/people:</b> ' + esc(e.pt) + '</p>' : '') + '<p class="small">' + e.tg.split(",").map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join(" ") + ' <a href="' + esc(e.u) + '" target="_blank" rel="noopener">source</a></p></div>';
 }
+function ccard(k) {
+return '<div class="card cB"><div class="meta"><span class="b win">' + esc(progName(k.p)) + '</span> <span class="muted">' + k.y + ' | ' + esc(k.c) + '</span></div><h3>' + esc(k.name) + '</h3><p class="who">' + rlink(k.r) + '</p><p>' + esc(k.d) + '</p>' + (k.pt ? '<p class="small"><b>Partners/people:</b> ' + esc(k.pt) + '</p>' : '') + (k.u ? '<p class="small"><a href="' + esc(k.u) + '" target="_blank" rel="noopener">source</a></p>' : '') + '</div>';
+}
+V.campaigns = function () {
+return '<h2>Award-winning campaigns</h2><p class="muted">Campaign names, results, agencies and people behind NSAA winners (and notable finalists), from resort and association releases. ' + CAMPS.length + ' campaigns documented so far.</p><div class="grid">' + CAMPS.slice().sort(function (a, b) { return b.y - a.y; }).map(ccard).join("") + '</div>';
+};
 V.library = function () {
 var chans = uniq(SAM.map(function (e) { return e.ch; })).sort();
 return '<h2>Marketing campaign & lesson library</h2><p class="muted">Summaries and lessons are our own paraphrases of SAM\'s reviewers\' assessments. Follow the source link for the original article.</p><div class="filters">' +
@@ -224,6 +236,7 @@ return n.split(/\s*\/\s*/).every(function (x) { return /^[A-Z][A-Za-z.'\-]+( [A-
 }
 V.partners = function () {
 var m = {};
+CAMPS.forEach(function (k) { if (!k.pt) return; k.pt.split(/;\s*/).forEach(function (p) { p = p.trim(); (m[p] = m[p] || []).push({y: k.y, r: k.r, t: progName(k.p) + ': ' + k.name}); }); });
 SAM.forEach(function (e) { if (!e.pt) return; e.pt.split(/;\s*/).forEach(function (p) { p = p.trim(); (m[p] = m[p] || []).push(e); }); });
 AW.forEach(function (a) { if ((a.p === "GE" || a.p === "S") && isPerson(a.n)) { var p = a.n.replace(/\s*\(.*\)\s*$/, "") + " (individual honoree)"; (m[p] = m[p] || []).push({y: a.y, r: a.r, t: progName(a.p) + ": " + a.c + (a.s === "F" ? " (finalist)" : ""), k: a.s}); } });
 var keys = Object.keys(m).sort(function (a, b) { return m[b].length - m[a].length || a.localeCompare(b); });
@@ -242,15 +255,15 @@ return h + '</tbody></table>';
 // ---- About ----
 V.about = function () {
 return '<h2>About this research resource</h2><div class="prose"><p>This database answers one question: which ski resorts consistently do the best marketing work, what exactly are they doing differently, and what can we learn from them?</p>' +
-'<p><b>Formal awards</b> come from the National Ski Areas Association: Marketing Awards (2010-2026), Golden Eagle sustainability awards (2010-2026), Conversion Cup (2011-2026) and Safety Awards (2011-2026). Finalists are included for 2021-2026.</p>' +
+'<p><b>Formal awards</b> come from the National Ski Areas Association: Marketing Awards (2010-2026, plus 2007 and 2009), Golden Eagle sustainability awards (2010-2026), Conversion Cup (2011-2026), Safety Awards (2009, 2011-2026) and the discontinued Guest Service Awards (2009-2010). Finalists are included for 2019 and 2021-2026. The Award campaigns tab documents the campaign behind each winner where resorts published details.</p>' +
 '<p><b>Editorial recognition</b> comes from Ski Area Management (SAM): the annual Best & Worst in Marketing feature and Peer Reviews. Every year with free full text online is extracted (2009-10, 2011-12 through 2015-16, 2024-25, 2025-26, plus 2025-26 Peer Reviews). A SAM "Best" is an editorial mention by a reviewer panel, not a formal award, and a "Worst" is a critique. They are kept as separate programs and weighted differently.</p>' +
-'<p><b>Consumer reputation</b> comes from the World Ski Awards (US and Canada winners 2013-2026), USA TODAY 10Best Readers\' Choice (top 10, 2016-2025) and the SKI Magazine reader survey. These measure how guests rate the resort, not its marketing, so they are reported separately and excluded from the recognition score. SKI results are filed under the year they were published (the guide carries the next year\'s label).</p>' +
+'<p><b>Consumer reputation</b> comes from the World Ski Awards (US and Canada winners 2013-2026), USA TODAY 10Best Readers\' Choice (Best Ski Resort 2016-2025, Ski School and Snow Tubing 2023-2025, Terrain Park 2016), Conde Nast Traveler Readers\' Choice (2025-2026) and the SKI Magazine reader survey. These measure how guests rate the resort, not its marketing, so they are reported separately and excluded from the recognition score. SKI results are filed under the year they were published (the guide carries the next year\'s label).</p>' +
 '<p><b>Naming:</b> resorts are normalized to their current name (e.g., Squaw Valley | Alpine Meadows is grouped under Palisades Tahoe, and Aspen Skiing Company under Aspen Snowmass). The original name is kept in the notes. The year is the calendar year the award was presented (2025 = the 2024-25 season).</p>' +
 '<p><b>Copyright:</b> campaign summaries and lessons are short paraphrases written for this database. Read the full original articles at the linked sources.</p>' +
-'<p><b>Next steps:</b> extract the SAM subscriber archive (Best/Worst 2003-2009, 2010-11 and 2016-17 through 2023-24; Peer Reviews 2021-22 through 2024-25; Outlook on Resort Marketing reports); add NSAA finalists before 2021; add the 2026 USA TODAY 10Best results when published, other 10Best ski categories and Conde Nast Traveler; link each campaign to its agency, production company, director and talent; and connect to the resort profile, ad campaign and creative partner databases.</p></div>';
+'<p><b>Next steps:</b> extract the SAM subscriber archive (Best/Worst 2003-2009, 2010-11 and 2016-17 through 2023-24; Peer Reviews 2021-22 through 2024-25; Outlook on Resort Marketing reports); add NSAA finalists for 2010-2018 and 2020 (not published online); add the 2026 USA TODAY 10Best results when published and earlier Conde Nast Traveler lists; keep documenting the campaign, agency and production partners behind each winner; link each campaign to its agency, production company, director and talent; and connect to the resort profile, ad campaign and creative partner databases.</p></div>';
 };
 // ================= ROUTER =================
-var TABS = [["dash", "Leaderboard"], ["awards", "Awards database"], ["resorts", "Resort profiles"], ["library", "Campaign library"], ["lessons", "Lessons by theme"], ["partners", "Creative partners"], ["sources", "Sources"], ["about", "About"]];
+var TABS = [["dash", "Leaderboard"], ["awards", "Awards database"], ["resorts", "Resort profiles"], ["library", "Campaign library"], ["campaigns", "Award campaigns"], ["lessons", "Lessons by theme"], ["partners", "Creative partners"], ["sources", "Sources"], ["about", "About"]];
 function show(tab, arg) {
 $("nav").innerHTML = TABS.map(function (t) { return '<button data-t="' + t[0] + '" class="' + (t[0] === tab ? "on" : "") + '">' + t[1] + '</button>'; }).join("");
 $("main").innerHTML = V[tab]();
