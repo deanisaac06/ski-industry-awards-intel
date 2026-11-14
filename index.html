@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ski Industry Awards & Marketing Intelligence</title>
 <style>
-:root { --ink: #10202f; --muted: #5d6b78; --line: #dfe5ea; --bg: #f5f8fa; --brand: #0b5cad; --win: #1e7d46; --worst: #b3261e; --fin: #8a6d00; --peer: #6a3fb5; }
+:root { --ink: #10202f; --muted: #5d6b78; --line: #dfe5ea; --bg: #f5f8fa; --brand: #0b5cad; --win: #1e7d46; --worst: #b3261e; --fin: #8a6d00; --peer: #6a3fb5; --rank: #2b6f8a; }
 * { box-sizing: border-box; }
 body { margin: 0; font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); }
 header { background: linear-gradient(120deg, #0b2e4f, #0b5cad); color: #fff; padding: 22px 28px 0; }
@@ -14,7 +14,7 @@ header p { margin: 4px 0 14px; opacity: .85; }
 #nav { display: flex; flex-wrap: wrap; gap: 4px; }
 #nav button { background: transparent; color: #dbe9f7; border: 0; padding: 10px 14px; font-size: 14px; cursor: pointer; border-radius: 8px 8px 0 0; }
 #nav button.on { background: var(--bg); color: var(--ink); font-weight: 600; }
-main { padding: 20px 28px 60px; max-width: 1500px; }
+main { padding: 20px 28px 60px; max-width: 1500px; overflow-x: auto; }
 h2 { margin: 28px 0 8px; font-size: 20px; }
 h3 { margin: 6px 0; font-size: 16px; }
 a { color: var(--brand); text-decoration: none; }
@@ -40,7 +40,7 @@ tr:hover td { background: #fafcfe; }
 .lesson { background: #f2f7fc; padding: 6px 8px; border-radius: 6px; }
 .tag { display: inline-block; background: #eaf1f8; color: #28445f; border-radius: 10px; padding: 1px 8px; font-size: 12px; margin: 1px 0; }
 .b { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 12px; font-weight: 600; color: #fff; }
-.b.win { background: var(--win); } .b.worst { background: var(--worst); } .b.fin { background: var(--fin); } .b.mixed { background: #7a8691; } .b.peer { background: var(--peer); }
+.b.win { background: var(--win); } .b.worst { background: var(--worst); } .b.fin { background: var(--fin); } .b.mixed { background: #7a8691; } .b.peer { background: var(--peer); } .b.rank { background: var(--rank); }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 12px; }
 .filters select, .filters input, .filters button { padding: 8px 10px; border: 1px solid #c9d3dc; border-radius: 8px; font-size: 14px; background: #fff; }
 .filters input { min-width: 280px; flex: 1; }
@@ -58,9 +58,16 @@ footer { padding: 18px 28px; color: var(--muted); font-size: 12px; }
 <nav id="nav"></nav>
 </header>
 <main id="main"><p>Loading...</p></main>
-<footer>Sources: NSAA award archives, Ski Area Management (SAM) Best & Worst in Marketing and Peer Reviews. Summaries are paraphrased; see linked originals. Dataset v0.1, November 2026.</footer>
+<footer>Sources: NSAA award archives and releases; Ski Area Management (SAM) Best & Worst in Marketing and Peer Reviews; World Ski Awards; USA TODAY 10Best Readers' Choice; SKI Magazine reader survey. Summaries are paraphrased; see linked originals. Dataset v0.2, November 2026.</footer>
 <script src="data.js"></script>
 <script src="data2.js"></script>
+<script src="data3.js"></script>
+<script src="data4.js"></script>
+<script src="data5.js"></script>
+<script src="data6.js"></script>
+<script src="data7.js"></script>
+<script src="data8.js"></script>
+<script src="data9.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
